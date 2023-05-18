@@ -1,9 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import { User } from '../interfaces/user'
 import { useStorage } from '@vueuse/core'
 import axios from 'axios'
-import { log } from 'console'
 
 export const useUserStore = defineStore('user', () => {
   const KEY = 'http://localhost:5001/api'
@@ -12,6 +10,10 @@ export const useUserStore = defineStore('user', () => {
   const loginErrorMessage = ref<string>('')
   const registerSuccessMessage = ref<string>('')
   const registerErrorMessage = ref<string>('')
+
+  const config = {
+    headers: { Authorization: `Bearer ${accessToken.value}`}
+  }
 
   async function login(email: string, password: string){
     try {
@@ -51,6 +53,15 @@ export const useUserStore = defineStore('user', () => {
       registerSuccessMessage.value = ""
     }
   }
+  
+  async function currentUser(){
+    try {
+      let response = await axios.get<any>(`${KEY}/user/currentuser`,config)
+      return response.data
+    } catch (error) {
+      
+    }
+  }
 
   function logout(){
     accessToken.value = undefined
@@ -62,6 +73,7 @@ export const useUserStore = defineStore('user', () => {
     loginSuccessMessage,
     loginErrorMessage,
     registerErrorMessage,
-    registerSuccessMessage
+    registerSuccessMessage,
+    currentUser
   }
 })

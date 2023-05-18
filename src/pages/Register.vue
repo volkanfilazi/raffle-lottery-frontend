@@ -9,10 +9,7 @@ import { useUserStore } from '../store/UserStore';
 
   async function register(){
     const response = await userStore.register(username.value, email.value, password.value)
-    console.log("test1",userStore.registerErrorMessage);
-    
-    console.log(response);
-    
+     
   }
 </script>
 <template>
