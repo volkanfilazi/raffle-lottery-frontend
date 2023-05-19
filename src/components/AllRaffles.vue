@@ -5,7 +5,7 @@ import { useRaffleStore } from '../store/RaffleStore'
 const raffleStore = useRaffleStore()
 
 onMounted(async () => {
-  const response = await raffleStore.getAllRaffles()
+  await raffleStore.getAllRaffles()
 })
 </script>
 
