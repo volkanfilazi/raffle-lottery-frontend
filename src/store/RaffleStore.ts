@@ -9,6 +9,7 @@ export const useRaffleStore = defineStore('raffle', () => {
   const KEY = 'http://localhost:5001/api'
   const allRaffles = ref<raffleList[]>([])
   const accessToken = useStorage("token","")
+  const joinRaffleErrorMessage = ref<string>('')
 
   const config = {
     headers: { Authorization: `Bearer ${accessToken.value}`}
@@ -26,10 +27,10 @@ export const useRaffleStore = defineStore('raffle', () => {
     }
   }
 
-  async function newRaffle(userId: String, giftBalance: String, maxParticipants: String){
+  async function newRaffle(createdBy: String, giftBalance: Number, maxParticipants: number){
     try {
       let response = await axios.post<any>(`${KEY}/raffle`,{
-        userId,
+        createdBy,
         giftBalance,
         maxParticipants
       },config)
@@ -39,9 +40,23 @@ export const useRaffleStore = defineStore('raffle', () => {
     }
   }
 
+  async function joinRaffle(raffleId: string, userId: string){
+    try {
+      let response = await axios.post<any>(`${KEY}/raffle/join`,{
+        raffleId,
+        userId
+      },config)
+      return response.data
+    } catch (error: any) {
+      joinRaffleErrorMessage.value = error.response.data.message
+    }
+  }
+
   return {
     getAllRaffles,
     allRaffles,
-    newRaffle
+    newRaffle,
+    joinRaffle,
+    joinRaffleErrorMessage
   }
 })

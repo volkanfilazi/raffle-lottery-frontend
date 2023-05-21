@@ -7,10 +7,10 @@ import { useRouter } from "vue-router";
 const router = useRouter()
 const userStore = useUserStore()
 const isLoading = ref<boolean>(true)
-const response = ref<CurrentUser | null>(null)
 
 async function fetchCurrentUser() {
-  response.value = await userStore.currentUser()
+  await userStore.currentUser()
+  
   isLoading.value = false
 }
 

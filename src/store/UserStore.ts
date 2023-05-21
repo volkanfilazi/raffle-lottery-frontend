@@ -58,8 +58,9 @@ export const useUserStore = defineStore('user', () => {
   
   async function currentUser(){
     try {
-      let response = await axios.get<any>(`${KEY}/user/currentuser`,config)
+      let response = await axios.get<User>(`${KEY}/user/currentuser`,config)
       userProfile.value = response.data
+      
       return response.data
     } catch (error) {
       
