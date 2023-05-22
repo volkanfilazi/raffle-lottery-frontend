@@ -11,13 +11,12 @@ const maxParticipants = ref<number>()
 const userId = ref<string>('')
 const raffleStore = useRaffleStore()
 const userStore = useUserStore()
+const raffleDetailToogle = ref<boolean>(false)
 
 async function createRaffle() {
   await userStore.currentUser()
   userId.value = userStore.userProfile._id
-  console.log("id", userId.value);
-  console.log("balance", balance.value);
-
+  await raffleStore.getAllRaffles()
   await raffleStore.newRaffle(userId.value, balance.value, maxParticipants.value)
 }
 
@@ -28,6 +27,13 @@ async function fetchJoinRaffle(raffleId: string, userId: string) {
 
 async function fetchGetSingleRaffle(id: string) {
   await raffleStore.getASingleRaffle(id)
+  raffleDetailToogle.value = true
+}
+
+async function fetchStartRaffle(id: string){
+  await raffleStore.startRaffle(id)
+  await raffleStore.getAllRaffles()
+  await fetchGetSingleRaffle(id)
 }
 onMounted(async () => {
   await raffleStore.getAllRaffles()
@@ -40,9 +46,9 @@ onMounted(async () => {
       <div @click="fetchGetSingleRaffle(raffle._id)" class="min-w-[300px] p-2 border-[1px] border-black"
         v-for="raffle in raffleStore.allRaffles">
         <p class="text-green-500 font-bold text-right" v-if="raffle.available === true">Active</p>
+        <p class="text-red-500 font-bold text-right" v-else>Finish</p>
         <p>Gift Balance : {{ raffle.giftBalance }} $</p>
         <p>{{ raffle.participants.length }} / {{ raffle.maxParticipants }}</p>
-        <p v-for="participants in raffle.participants">{{ participants.username }}</p>
         <div class="w-full flex justify-center items-center">
           <button v-if="raffle.participants.some((user) => user._id === userStore.userProfile?._id)"
             class="text-red-500 p-1">Joined</button>
@@ -51,18 +57,19 @@ onMounted(async () => {
         </div>
       </div>
     </div>
-    <div class="border-[1px] border-black p-2">
+    <div v-if="raffleDetailToogle" class="border-[1px] border-black p-2">
       <div class="w-full flex flex-col justify-center items-center">
         <div>Creater : {{ raffleStore.singleRaffleResponse?.createdBy }}</div>
         <div>Max Participants :{{ raffleStore.singleRaffleResponse?.maxParticipants }}</div>
         <div>Gift Balance : {{ raffleStore.singleRaffleResponse?.giftBalance }}</div>
+        <div class="bg-green-600 text-white p-5">Winner : {{ raffleStore.singleRaffleResponse?.winner?.username }}</div>
       </div>
       <div class="flex gap-2">
         <div v-for="participants in raffleStore.singleRaffleResponse?.participants">
           <p class="border-[1px] border-black">{{ participants.username }}</p>
         </div>
       </div>
-      <div class="flex justify-center"><button @click="raffleStore.startRaffle(raffleStore.singleRaffleResponse._id)" class="border-[1px] border-black p-1">Start Raffle</button></div>
+      <div class="flex justify-center"><button v-if="raffleStore.singleRaffleResponse.createdBy === userStore.userProfile._id && raffleStore.singleRaffleResponse.available === true" @click="fetchStartRaffle(raffleStore.singleRaffleResponse._id)" class="border-[1px] border-black p-1">Start Raffle</button></div>
     </div>
     <div class="flex w-full h-full justify-center items-center">
       <div v-if="userStore.userProfile?._id" class="flex flex-col">
