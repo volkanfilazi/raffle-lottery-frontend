@@ -10,6 +10,9 @@ export const useRaffleStore = defineStore('raffle', () => {
   const allRaffles = ref<raffleList[]>([])
   const accessToken = useStorage("token","")
   const joinRaffleErrorMessage = ref<string>('')
+  const getSingleRaffleErrorMessage = ref<string>('')
+  let singleRaffleResponse = ref<raffleList>();
+
 
   const config = {
     headers: { Authorization: `Bearer ${accessToken.value}`}
@@ -52,11 +55,39 @@ export const useRaffleStore = defineStore('raffle', () => {
     }
   }
 
+  async function getASingleRaffle(id: string){
+    try {
+      let response = await axios.get<raffleList>(`${KEY}/raffle/${id}`)
+      singleRaffleResponse.value = response.data      
+      if(response){
+        getSingleRaffleErrorMessage.value = ''
+      }
+      return response.data
+    } catch (error) {
+      getSingleRaffleErrorMessage.value = error.response.data.message
+    }
+  }
+
+  async function startRaffle(raffleId: string){
+    try {
+      let response = await axios.post<any>(`${KEY}/raffle/start`,{
+        raffleId
+      },config)
+      return response.data
+    } catch (error) {
+      
+    }
+  }
+
   return {
     getAllRaffles,
     allRaffles,
     newRaffle,
     joinRaffle,
-    joinRaffleErrorMessage
+    joinRaffleErrorMessage,
+    getASingleRaffle,
+    getSingleRaffleErrorMessage,
+    singleRaffleResponse,
+    startRaffle
   }
 })
