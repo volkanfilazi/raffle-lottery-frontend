@@ -5,7 +5,7 @@
 
 <template>
   <NavBar></NavBar>
-  <div class="flex h-screen">
+  <div class="flex h-screen bg-[#23232d]">
     <RouterView></RouterView>
   </div>
 </template>

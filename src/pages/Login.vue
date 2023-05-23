@@ -17,6 +17,9 @@ const checked = ref(false)
 const savedEmail = useStorage("email", "")
 const savedPassword = useStorage("password", "")
 
+
+const checkLogout = useStorage("logout",Boolean)
+
 const drawerToogle = ref(false)
 
 onMounted(() => {
@@ -26,16 +29,19 @@ onMounted(() => {
   }
 })
 
-
 useStorage("check", checked)
 
 async function login() {
   const response = await userStore.login(email.value, password.value)
-  setTimeout(() => {
-    if (response) {
-      router.push({ name: 'homepage', });
+  if(response){
+    const currentUserResponse = await userStore.currentUser()
+    if(currentUserResponse){
+      setTimeout( async() => {
+        checkLogout.value = true
+          router.push({ name: 'homepage', });
+      }, 2000)
     }
-  }, 2000)
+  }
   if (userStore.loginErrorMessage) {
     drawerToogle.value = true
     setTimeout(() => {
@@ -63,7 +69,7 @@ function rememberMe() {
 </script>
 
 <template>
-  <div class="flex h-full justify-center items-center w-full">
+  <div class="flex h-full justify-center text-white items-center w-full">
     <div class="flex flex-col gap-2">
       <VInput placeValue="email" typeValue="string" v-model="email"></VInput>
       <VInput placeValue="password" typeValue="password" v-model="password"></VInput>
@@ -72,7 +78,7 @@ function rememberMe() {
         <VCheckbox class="cursor-pointer" :open="checked" @click="checked = !checked"></VCheckbox>
         <h3 @click="checked = !checked" class="text-[14px] cursor-pointer">Remember me</h3>
       </div>
-    <p class="text-black">You dont have account? <span class="text-red-500 cursor-pointer"
+    <p class="text-black">You dont have account? <span class="text-white cursor-pointer"
         @click="router.push({ name: 'register'})">Register</span></p>
   </div>
   <div class="flex z-[120]">

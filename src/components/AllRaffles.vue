@@ -16,8 +16,8 @@ const raffleDetailToogle = ref<boolean>(false)
 async function createRaffle() {
   await userStore.currentUser()
   userId.value = userStore.userProfile._id
-  await raffleStore.getAllRaffles()
   await raffleStore.newRaffle(userId.value, balance.value, maxParticipants.value)
+  await raffleStore.getAllRaffles()
 }
 
 async function fetchJoinRaffle(raffleId: string, userId: string) {
@@ -41,7 +41,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="flex flex-col w-full">
+  <div class="flex flex-col w-full text-white mt-5">
     <div class="flex flex-wrap p-1 gap-2">
       <div @click="fetchGetSingleRaffle(raffle._id)" class="min-w-[300px] p-2 border-[1px] border-black"
         v-for="raffle in raffleStore.allRaffles">
@@ -57,7 +57,7 @@ onMounted(async () => {
         </div>
       </div>
     </div>
-    <div v-if="raffleDetailToogle" class="border-[1px] border-black p-2">
+    <div v-if="raffleDetailToogle" class="border-[1px] mt-5 border-black p-2">
       <div class="w-full flex flex-col justify-center items-center">
         <div>Creater : {{ raffleStore.singleRaffleResponse?.createdBy }}</div>
         <div>Max Participants :{{ raffleStore.singleRaffleResponse?.maxParticipants }}</div>

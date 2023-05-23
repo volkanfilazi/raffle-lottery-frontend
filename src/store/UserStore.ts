@@ -60,6 +60,7 @@ export const useUserStore = defineStore('user', () => {
     try {
       let response = await axios.get<User>(`${KEY}/user/currentuser`,config)
       userProfile.value = response.data
+      console.log(userProfile.value);
       
       return response.data
     } catch (error) {
@@ -68,7 +69,9 @@ export const useUserStore = defineStore('user', () => {
   }
 
   function logout(){
-    accessToken.value = undefined
+    accessToken.value = ''
+
+    return accessToken.value
   }
   return{
     login,
