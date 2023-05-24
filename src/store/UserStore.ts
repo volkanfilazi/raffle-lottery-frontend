@@ -23,7 +23,11 @@ export const useUserStore = defineStore('user', () => {
         email,
         password
       })
+      
       accessToken.value = response.data.token
+      console.log("login function called");
+      console.log(accessToken.value);
+      
       if(response.data){
         loginSuccessMessage.value = "Successfuly"
         loginErrorMessage.value = ''
@@ -60,7 +64,8 @@ export const useUserStore = defineStore('user', () => {
     try {
       let response = await axios.get<User>(`${KEY}/user/currentuser`,config)
       userProfile.value = response.data
-      console.log(userProfile.value);
+
+      console.log("currentuser called");
       
       return response.data
     } catch (error) {

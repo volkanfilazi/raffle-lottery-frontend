@@ -41,7 +41,7 @@ const inputValue = computed({
 </script>
 <template>
   <input v-model="inputValue"
-    class="border-[1px] text-white mb-5 focus:border-blue-600 outline-none border-black bg-transparent p-2 rounded-lg border-"
+    class="border-[1px] text-white mb-5 focus:border-blue-600 outline-none border-yellow-400 bg-transparent p-2 rounded-lg border-"
     :type="typeValue" :placeholder="placeValue">
 </template>
 
