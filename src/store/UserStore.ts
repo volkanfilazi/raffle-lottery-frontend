@@ -24,7 +24,11 @@ export const useUserStore = defineStore('user', () => {
         password
       })
       
-      accessToken.value = response.data.token
+      if(response){
+        console.log("loginStore response true");
+        
+        accessToken.value = response.data.token
+      }
       console.log("login function called");
       console.log(accessToken.value);
       
@@ -75,7 +79,6 @@ export const useUserStore = defineStore('user', () => {
 
   function logout(){
     accessToken.value = ''
-
     return accessToken.value
   }
   return{

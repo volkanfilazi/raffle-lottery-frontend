@@ -1,31 +1,27 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
 import { useUserStore } from '../store/UserStore';
 import { useRouter } from "vue-router";
-import { tryOnMounted, useStorage } from '@vueuse/core'
+import { useStorage } from '@vueuse/core'
 import { watchEffect } from 'vue';
 
 
 const checkLogout = useStorage("logout",false)
 const loginSuccessControl = useStorage("loginControl",Boolean)
 
-const accessToken = useStorage("token","")
-
-
 const router = useRouter()
 const userStore = useUserStore()
 
 watchEffect(async() =>{
-  console.log("loginControl",loginSuccessControl.value);
-  
   if(loginSuccessControl.value === true){
-    await userStore.currentUser()
+      const response = await userStore.currentUser()
+      if(response === undefined){
+        router.push({ name: 'login'})
+      }     
   }
 })
 
 async function logOut() {
   const response = userStore.logout()
-  console.log(response);
   if(response === ''){
   checkLogout.value = false
   loginSuccessControl.value = false

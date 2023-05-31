@@ -11,7 +11,10 @@ export const useRaffleStore = defineStore('raffle', () => {
   const accessToken = useStorage("token","")
   const joinRaffleErrorMessage = ref<string>('')
   const getSingleRaffleErrorMessage = ref<string>('')
+  const newRaffleErrorMessage = ref<string>('')
+  const newRaffleSuccessMessage = ref<string>('')
   let singleRaffleResponse = ref<raffleList>();
+  
 
 
   const config = {
@@ -37,9 +40,12 @@ export const useRaffleStore = defineStore('raffle', () => {
         giftBalance,
         maxParticipants
       },config)
+      newRaffleSuccessMessage.value = "New Raffle Successfully Created!"
+      newRaffleErrorMessage.value = ""
       return response.data
-    } catch (error) {
-      
+    } catch (error:any) {
+      newRaffleErrorMessage.value = error.response.data.error
+      newRaffleSuccessMessage.value = ""
     }
   }
 
@@ -88,6 +94,8 @@ export const useRaffleStore = defineStore('raffle', () => {
     getASingleRaffle,
     getSingleRaffleErrorMessage,
     singleRaffleResponse,
-    startRaffle
+    startRaffle,
+    newRaffleErrorMessage,
+    newRaffleSuccessMessage
   }
 })

@@ -4,20 +4,38 @@ import { useRaffleStore } from '../store/RaffleStore'
 import VInput from '../components/base/V-Input.vue'
 import VButton from '../components/base/V-Button.vue'
 import { useUserStore } from '../store/UserStore'
+import { useRouter } from "vue-router";
+import { log } from 'console';
+import { watchEffect } from 'vue';
 
 
+const router = useRouter()
 const balance = ref<number>()
 const maxParticipants = ref<number>()
 const userId = ref<string>('')
 const raffleStore = useRaffleStore()
 const userStore = useUserStore()
 const raffleDetailToogle = ref<boolean>(false)
+const drawerToogle = ref(false)
+
 
 async function createRaffle() {
   await userStore.currentUser()
   userId.value = userStore.userProfile._id
-  await raffleStore.newRaffle(userId.value, balance.value, maxParticipants.value)
+  const response = await raffleStore.newRaffle(userId.value, balance.value, maxParticipants.value)
   await raffleStore.getAllRaffles()
+  if(raffleStore.newRaffleErrorMessage){
+    drawerToogle.value = true
+    setTimeout(() =>{
+      drawerToogle.value = false
+    },2000)
+  }
+  if(raffleStore.newRaffleSuccessMessage){
+    drawerToogle.value = true
+    setTimeout(() =>{
+      drawerToogle.value = false
+    },2000)
+  }
 }
 
 async function fetchJoinRaffle(raffleId: string, userId: string) {
@@ -89,4 +107,14 @@ onMounted(async () => {
       </div>
     </div>
   </div>
+  <div class="flex z-[120]">
+      <div
+        class="fixed bottom-0 right-0 flex flex-col rounded-lg bg-red-500 shadow-sm shadow-black justify-center items-center z-40 w-64 sm-w-64 md:w-[250px] md:h-[100px] mb-20 ml-2 transition-transform duration-500 transform"
+        :class="{ 'translate-x-full': !drawerToogle, 'translate-x-0 mr-2': drawerToogle, 'translate-x-0 mb-2 bg-green-500': raffleStore.newRaffleSuccessMessage }">
+        <p v-if="raffleStore.newRaffleErrorMessage" class="transition-all duration-500 text-white">{{
+          raffleStore.newRaffleErrorMessage }}</p>
+        <p v-if="raffleStore.newRaffleSuccessMessage" class="transition-all duration-500 text-white">{{
+          raffleStore.newRaffleSuccessMessage }}</p>
+      </div>
+    </div>
 </template>

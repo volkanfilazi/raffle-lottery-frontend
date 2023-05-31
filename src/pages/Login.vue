@@ -16,11 +16,11 @@ const password = ref<string>('')
 const checked = ref(false)
 const savedEmail = useStorage("email", "")
 const savedPassword = useStorage("password", "")
-const loginSuccessControl = useStorage("loginControl",false)
+const loginSuccessControl = useStorage("loginControl", false)
+const drawerToogle = ref(false)
 
 const checkLogout = useStorage("logout", Boolean)
-
-const drawerToogle = ref(false)
+const accessToken = useStorage("token", "")
 
 onMounted(() => {
   if (checked.value === true) {
@@ -33,19 +33,22 @@ useStorage("check", checked)
 
 async function login() {
   const response = await userStore.login(email.value, password.value)
-  if (response) {
+  if (response.token) {
+    console.log("login function");
     loginSuccessControl.value = true
-  } 
-
-  if(loginSuccessControl.value === true){
-    await userStore.currentUser()
   }
 
-  setTimeout(async () => {
-    checkLogout.value = true
-    router.push({ name: 'homepage', });
-  }, 2000)
-
+  if (loginSuccessControl.value === true) {    
+      const currentUserResponse = await userStore.currentUser()
+      if (currentUserResponse) {
+        console.log("currenUserResponse",currentUserResponse);
+        
+        setTimeout(async () => {
+          router.push({ name: 'homepage', });
+          checkLogout.value = true
+        }, 2000)
+      }
+  }
   if (userStore.loginErrorMessage) {
     drawerToogle.value = true
     setTimeout(() => {
