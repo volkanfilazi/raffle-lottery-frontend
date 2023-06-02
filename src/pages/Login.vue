@@ -34,7 +34,6 @@ useStorage("check", checked)
 async function login() {
   const response = await userStore.login(email.value, password.value)
   if (response.token) {
-    console.log("login function");
     loginSuccessControl.value = true
   }
 
